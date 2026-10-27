@@ -52,7 +52,6 @@
             height: 100%;
             object-fit: cover;
         }
-        /* Опускаем фото на третьем слайде ниже, чтобы было видно лицо */
         .photo-frame img.offset-photo {
             object-position: center 30%;
         }
@@ -121,19 +120,45 @@
             gap: 10px;
             margin-top: 15px;
         }
-        /* Стили для салюта */
-        .firework {
+
+        /* Красивые элементы салюта и конфетти */
+        .firework-particle {
             position: absolute;
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            box-shadow: 0 0 #fff;
-            animation: explode 1s infinite linear;
-            z-index: 5;
+            pointer-events: none;
+            animation: burst 1s forwards ease-out;
+            z-index: 100;
         }
-        @keyframes explode {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(30); opacity: 0; }
+        @keyframes burst {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 15px;
+            pointer-events: none;
+            animation: fall 2s forwards linear;
+            z-index: 100;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(80vh) rotate(720deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -163,20 +188,18 @@
         <p id="errorMsg" style="color: #ff6b6b; margin-top: 10px; font-size: 0.9rem;"></p>
     </div>
 
-    <!-- СТРАНИЦА 2: Вопрос "Любишь ли ты меня?" с убегающими кнопками -->
+    <!-- СТРАНИЦА 2: Вопрос с убегающими кнопками -->
     <div id="page2" class="container">
         <div class="photo-frame">
             <img src="images/photo2.jpeg" alt="Наше фото">
         </div>
         <h2>Любишь ли ты меня? 🥰</h2>
         <button class="btn-option" onclick="nextPage('page3')">Да, безумно! &hearts;</button>
-        
-        <!-- Убегающие кнопки -->
         <button id="weekendBtn" class="btn-option" style="position: relative;" onmouseover="moveButton('weekendBtn', 'weekendScale')" onclick="moveButton('weekendBtn', 'weekendScale')">По выходным немножко 😄</button>
         <button id="runawayBtn" class="btn-option" style="position: relative;" onmouseover="moveButton('runawayBtn', 'runawayScale')" onclick="moveButton('runawayBtn', 'runawayScale')">Конечно нет 😈</button>
     </div>
 
-    <!-- СТРАНИЦА 3: Вопрос "Была ли влюблена в колледже" -->
+    <!-- СТРАНИЦА 3: Вопрос про колледж -->
     <div id="page3" class="container">
         <div class="photo-frame">
             <img src="images/photo3.jpeg" alt="Наше фото" class="offset-photo">
@@ -186,16 +209,16 @@
         <button class="btn-option" onclick="handleCollegeNo()">Нет</button>
     </div>
 
-    <!-- СТРАНИЦА 4: Финал (Коллаж + Салют) -->
+    <!-- СТРАНИЦА 4: Финал (Коллаж + Мощный салют) -->
     <div id="page4" class="container collage-container">
         <h2>Наша прекрасная история вместе &hearts;</h2>
         <div style="margin-bottom: 20px;">
             <img src="images/collage.jpeg" alt="Свадебный коллаж" class="collage-img">
         </div>
-        <p style="font-size: 1.1rem; color: #ff6b6b; font-weight: bold;">Люблю тебя бесконечно! Спасибо, что вы у меня есть! 💍🥂</p>
+        <p style="font-size: 1.1rem; color: #ff6b6b; font-weight: bold;">Люблю тебя бесконечно! Спасибо, что ты у меня есть! 💍🥂</p>
         
         <div class="action-row">
-            <button onclick="triggerFireworks()" style="background: #ffb142;">Запустить салют ✨</button>
+            <button onclick="launchMegaFireworks()" style="background: #ffb142; font-size: 1.1rem; padding: 15px;">Запустить грандиозный салют ✨🎆</button>
         </div>
     </div>
 
@@ -233,7 +256,6 @@
             }
         }
 
-        // Счетчик кликов "Нет" для колледжа
         let collegeNoClicks = 0;
 
         function playErrorSound() {
@@ -266,7 +288,6 @@
             }
         }
 
-        // Логика убегания и уменьшения для обеих кнопок
         let weekendScale = 1;
         let runawayScale = 1;
 
@@ -286,22 +307,86 @@
             btn.style.transform += ` translate(${x}px, ${y}px)`;
         }
 
-        // Функция салюта на последнем слайде
-        function triggerFireworks() {
-            for (let i = 0; i < 7; i++) {
+        // Синтезатор звука взрыва салюта (бабах)
+        function playExplosionSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Низкий бас взрыва
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.5);
+                
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } catch(e) {}
+        }
+
+        // Функция грандиозного мега-салюта и конфетти
+        function launchMegaFireworks() {
+            // Запускаем серию из 5 мощных залпов с интервалом
+            for (let i = 0; i < 5; i++) {
                 setTimeout(() => {
-                    const fw = document.createElement('div');
-                    fw.classList.add('firework');
-                    fw.style.left = Math.random() * window.innerWidth + 'px';
-                    fw.style.top = Math.random() * window.innerHeight + 'px';
+                    playExplosionSound();
+                    createFireworkBurst(
+                        Math.random() * (window.innerWidth - 200) + 100,
+                        Math.random() * (window.innerHeight - 300) + 100
+                    );
+                }, i * 400);
+            }
+            // Добавляем падающее конфетти
+            createConfettiRain();
+        }
+
+        function createFireworkBurst(x, y) {
+            const colors = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#9b59b6', '#ff6b81', '#ffffff'];
+            const particleCount = 40; // Количество искр в одной вспышке
+
+            for (let i = 0; i < particleCount; i++) {
+                const p = document.createElement('div');
+                p.classList.add('firework-particle');
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                p.style.backgroundColor = color;
+                p.style.boxShadow = `0 0 10px ${color}`;
+
+                // Уголки разлета искр во все стороны
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 120 + 40;
+                const tx = Math.cos(angle) * speed;
+                const ty = Math.sin(angle) * speed;
+
+                p.style.setProperty('--tx', `${tx}px`);
+                p.style.setProperty('--ty', `${ty}px`);
+
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1000);
+            }
+        }
+
+        function createConfettiRain() {
+            const colors = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#9b59b6', '#ff6b81'];
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => {
+                    const c = document.createElement('div');
+                    c.classList.add('confetti');
+                    c.style.left = Math.random() * window.innerWidth + 'px';
+                    c.style.top = '-20px';
+                    c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0%';
                     
-                    const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-                    fw.style.backgroundColor = randomColor;
-                    fw.style.boxShadow = `0 0 20px 10px ${randomColor}`;
-                    
-                    document.body.appendChild(fw);
-                    setTimeout(() => fw.remove(), 1000);
-                }, i * 200);
+                    document.body.appendChild(c);
+                    setTimeout(() => c.remove(), 2000);
+                }, i * 30);
             }
         }
     </script>
