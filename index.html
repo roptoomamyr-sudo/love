@@ -18,6 +18,7 @@
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
+            position: relative;
         }
         .container {
             display: none;
@@ -29,6 +30,7 @@
             max-width: 450px;
             width: 90%;
             animation: fadeIn 0.5s ease-in-out;
+            z-index: 10;
         }
         .container.active {
             display: block;
@@ -50,10 +52,14 @@
             height: 100%;
             object-fit: cover;
         }
+        /* Опускаем фото на третьем слайде ниже, чтобы было видно лицо */
+        .photo-frame img.offset-photo {
+            object-position: center 30%;
+        }
         h2 {
             color: #333;
             margin-bottom: 20px;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
         }
         p {
             color: #666;
@@ -110,6 +116,25 @@
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
+        .action-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        /* Стили для салюта */
+        .firework {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            box-shadow: 0 0 #fff;
+            animation: explode 1s infinite linear;
+            z-index: 5;
+        }
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(30); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -138,34 +163,40 @@
         <p id="errorMsg" style="color: #ff6b6b; margin-top: 10px; font-size: 0.9rem;"></p>
     </div>
 
-    <!-- СТРАНИЦА 2: Вопрос "Любишь ли ты меня?" -->
+    <!-- СТРАНИЦА 2: Вопрос "Любишь ли ты меня?" с убегающими кнопками -->
     <div id="page2" class="container">
         <div class="photo-frame">
             <img src="images/photo2.jpeg" alt="Наше фото">
         </div>
         <h2>Любишь ли ты меня? 🥰</h2>
         <button class="btn-option" onclick="nextPage('page3')">Да, безумно! &hearts;</button>
-        <button class="btn-option" onclick="nextPage('page3')">По выходным немножко 😄</button>
-        <button class="btn-option" onclick="showWindowsError()">Конечно нет 😈</button>
+        
+        <!-- Убегающие кнопки -->
+        <button id="weekendBtn" class="btn-option" style="position: relative;" onmouseover="moveButton('weekendBtn', 'weekendScale')" onclick="moveButton('weekendBtn', 'weekendScale')">По выходным немножко 😄</button>
+        <button id="runawayBtn" class="btn-option" style="position: relative;" onmouseover="moveButton('runawayBtn', 'runawayScale')" onclick="moveButton('runawayBtn', 'runawayScale')">Конечно нет 😈</button>
     </div>
 
     <!-- СТРАНИЦА 3: Вопрос "Была ли влюблена в колледже" -->
     <div id="page3" class="container">
         <div class="photo-frame">
-            <img src="images/photo3.jpeg" alt="Наше фото">
+            <img src="images/photo3.jpeg" alt="Наше фото" class="offset-photo">
         </div>
         <h2>А была ли ты влюблена в меня в колледже? 😉</h2>
         <button class="btn-option" onclick="nextPage('page4')">Дааа ❤️</button>
-        <button class="btn-option" onclick="nextPage('page4')">Нет</button>
+        <button class="btn-option" onclick="handleCollegeNo()">Нет</button>
     </div>
 
-    <!-- СТРАНИЦА 4: Финал (Коллаж) -->
+    <!-- СТРАНИЦА 4: Финал (Коллаж + Салют) -->
     <div id="page4" class="container collage-container">
         <h2>Наша прекрасная история вместе &hearts;</h2>
         <div style="margin-bottom: 20px;">
             <img src="images/collage.jpeg" alt="Свадебный коллаж" class="collage-img">
         </div>
         <p style="font-size: 1.1rem; color: #ff6b6b; font-weight: bold;">Люблю тебя бесконечно! Спасибо, что ты у меня есть. С годовщиной! 💍🥂</p>
+        
+        <div class="action-row">
+            <button onclick="triggerFireworks()" style="background: #ffb142;">Запустить салют ✨</button>
+        </div>
     </div>
 
     <script>
@@ -193,7 +224,7 @@
         function checkPassword() {
             const pass = document.getElementById('passwordInput').value;
             const errorMsg = document.getElementById('errorMsg');
-            const correctPassword = '10102018'; // Пароль (дата)
+            const correctPassword = '10102018'; 
 
             if (pass === correctPassword) {
                 nextPage('page2');
@@ -202,9 +233,76 @@
             }
         }
 
-        // Шутка с ошибкой Windows
-        function showWindowsError() {
-            alert("Внимание! Ошибка Windows: Невозможно выбрать этот вариант, потому что вы любите меня слишком сильно! ❤️");
+        // Счетчик кликов "Нет" для колледжа
+        let collegeNoClicks = 0;
+
+        function playErrorSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } catch(e) {}
+        }
+
+        function handleCollegeNo() {
+            collegeNoClicks++;
+            playErrorSound();
+
+            if (collegeNoClicks === 1) {
+                alert("Ошибка Windows: Нужно отвечать честно! ⚠️");
+            } else if (collegeNoClicks === 2) {
+                alert("Ошибка Windows: Подумай хорошо, может забыла?! 🤔");
+            } else {
+                nextPage('page4');
+            }
+        }
+
+        // Логика убегания и уменьшения для обеих кнопок
+        let weekendScale = 1;
+        let runawayScale = 1;
+
+        function moveButton(btnId, scaleVarName) {
+            const btn = document.getElementById(btnId);
+            
+            if (scaleVarName === 'weekendScale') {
+                weekendScale = Math.max(0.4, weekendScale - 0.1);
+                btn.style.transform = `scale(${weekendScale})`;
+            } else {
+                runawayScale = Math.max(0.4, runawayScale - 0.1);
+                btn.style.transform = `scale(${runawayScale})`;
+            }
+            
+            const x = (Math.random() - 0.5) * 250;
+            const y = (Math.random() - 0.5) * 200;
+            btn.style.transform += ` translate(${x}px, ${y}px)`;
+        }
+
+        // Функция салюта на последнем слайде
+        function triggerFireworks() {
+            for (let i = 0; i < 7; i++) {
+                setTimeout(() => {
+                    const fw = document.createElement('div');
+                    fw.classList.add('firework');
+                    fw.style.left = Math.random() * window.innerWidth + 'px';
+                    fw.style.top = Math.random() * window.innerHeight + 'px';
+                    
+                    const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+                    fw.style.backgroundColor = randomColor;
+                    fw.style.boxShadow = `0 0 20px 10px ${randomColor}`;
+                    
+                    document.body.appendChild(fw);
+                    setTimeout(() => fw.remove(), 1000);
+                }, i * 200);
+            }
         }
     </script>
 </body>
