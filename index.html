@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для моей любимой ❤️</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            display: none;
+            animation: fadeIn 0.6s ease-in-out forwards;
+        }
+
+        .container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .photo-frame {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #ffd700;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+
+        button {
+            background: #ffd700;
+            color: #333;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #ffc107;
+            transform: translateY(-2px);
+        }
+
+        .buttons-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            position: relative;
+            min-height: 220px;
+        }
+
+        .answer-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .answer-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Окно ошибки Windows */
+        .win-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background: #ece9d8;
+            border: 2px solid #0055ea;
+            border-radius: 5px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 1000;
+            color: #000;
+            text-align: left;
+        }
+
+        .win-header {
+            background: linear-gradient(to right, #0055ea, #6388ee);
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .win-body {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.95rem;
+        }
+
+        .win-icon {
+            font-size: 32px;
+            color: red;
+            font-weight: bold;
+        }
+
+        .win-footer {
+            background: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+            border-top: 1px solid #ccc;
+        }
+
+        .win-footer button {
+            background: #dfdfdf;
+            color: #000;
+            border: 1px solid #7f7f7f;
+            padding: 5px 20px;
+            font-size: 0.9rem;
+            box-shadow: none;
+        }
+
+        .win-footer button:hover {
+            background: #e5f1fb;
+            border: 1px solid #0078d7;
+        }
+
+        /* Свадебный коллаж */
+        .collage-frame {
+            width: 100%;
+            max-height: 280px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 3px solid #fff;
+            margin-bottom: 15px;
+        }
+
+        .collage-frame img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- СТРАНИЦА 1: Авторизация -->
+    <div id="page1" class="container active">
+        <div class="photo-frame">
+            <!-- Замените имя файла на свое из папки images -->
+            <img src="images/photo1.jpg" alt="Наше фото">
+        </div>
+        <h2>Введите пароль, чтобы войти ❤️</h2>
+        <input type="password" id="passwordInput" placeholder="Подсказка: наша дата или любовь">
+        <br>
+        <button onclick="checkPassword()">Войти</button>
+        <p id="errorMsg" style="color: #ff6b6b; margin-top: 10px; font-size: 0.9rem;"></p>
+    </div>
+
+    <!-- СТРАНИЦА 2: Вопрос с улетающей/уменьшающейся кнопкой -->
+    <div id="page2" class="container">
+        <div class="photo-frame">
+            <img src="images/photo2.jpg" alt="Наше фото">
+        </div>
+        <h2>Как сильно ты меня любишь? 🥰</h2>
+        <div class="buttons-grid" id="gridPage2">
+            <button class="answer-btn" id="runawayBtn" onclick="moveButton(this)">Чуть-чуть</button>
+            <button class="answer-btn" id="shrinkBtn" onclick="shrinkButton(this)">Средина</button>
+            <button class="answer-btn" onclick="wrongAction()">Нормально</button>
+            <button class="answer-btn" onclick="nextPage(3)" style="background: rgba(255, 215, 0, 0.3); border-color: #ffd700;">Сильнее всего на свете! ❤️</button>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА 3: Вопрос про колледж с ошибкой Windows -->
+    <div id="page3" class="container">
+        <div class="photo-frame">
+            <img src="images/photo3.jpg" alt="Наше фото">
+        </div>
+        <h2>Ты была в меня влюблена в колледже? 😉</h2>
+        <div class="buttons-grid">
+            <button class="answer-btn" onclick="handleCollegeNo()">Нет 🤭</button>
+            <button class="answer-btn" onclick="nextPage(4)" style="background: rgba(255, 215, 0, 0.3); border-color: #ffd700;">Конечно, да! 💕</button>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА 4: Финал (Коллаж и музыка) -->
+    <div id="page4" class="container">
+        <h2>Наша история бесконечна... 💍</h2>
+        <div class="collage-frame">
+            <img src="images/collage.jpg" alt="Свадебный коллаж">
+        </div>
+        <p style="margin-bottom: 15px; font-size: 0.95rem;">Самый лучший день в нашей жизни ✨</p>
+        
+        <!-- Аудиоплеер (можно заменить ссылку на вашу песню в папке audio или оставить онлайн) -->
+        <audio id="bgMusic" loop>
+            <source src="images/song.mp3" type="audio/mp3">
+            Ваш браузер не поддерживает аудио.
+        </audio>
+        <button onclick="toggleMusic()" id="musicBtn" style="background: #ff4757; color: white;">🎵 Включить песню</button>
+    </div>
+
+    <!-- Окно ошибки Windows -->
+    <div id="winModal" class="win-modal">
+        <div class="win-header">
+            <span>Системная ошибка</span>
+            <span>×</span>
+        </div>
+        <div class="win-body">
+            <div class="win-icon">❌</div>
+            <div id="winErrorText">Ошибка: нужно отвечать честно!</div>
+        </div>
+        <div class="win-footer">
+            <button onclick="closeWinModal()">ОК</button>
+        </div>
+    </div>
+
+    <script>
+        let collegeNoClicks = 0;
+
+        function checkPassword() {
+            const pass = document.getElementById('passwordInput').value.trim();
+            // Укажите пароль ниже в кавычках (например, '1234' или 'любовь')
+            if (pass === '10102018' || pass === 'любовь' || pass === '0000') {
+                nextPage(2);
+            } else {
+                document.getElementById('errorMsg').innerText = 'Неправильный пароль! Подсказка: 10102018';
+            }
+        }
+
+        function nextPage(pageNumber) {
+            document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
+            document.getElementById('page' + pageNumber).classList.add('active');
+            
+            // Если перешли на финальную страницу, пробуем включить музыку
+            if (pageNumber === 4) {
+                const music = document.getElementById('bgMusic');
+                music.play().catch(() => {});
+            }
+        }
+
+        // Интерактив кнопки "Чуть-чуть" (улетает)
+        function moveButton(btn) {
+            const grid = document.getElementById('gridPage2');
+            const maxX = grid.clientWidth - btn.clientWidth;
+            const maxY = grid.clientHeight - btn.clientHeight;
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            btn.style.position = 'absolute';
+            btn.style.left = randomX + 'px';
+            btn.style.top = randomY + 'px';
+        }
+
+        // Интерактив кнопки "Средина" (уменьшается)
+        let scaleVal = 1;
+        function shrinkButton(btn) {
+            scaleVal -= 0.2;
+            if (scaleVal > 0.2) {
+                btn.style.transform = `scale(${scaleVal})`;
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+
+        function wrongAction() {
+            alert('Не угадал(а) вариант! Попробуй еще раз 😉');
+        }
+
+        // Логика кнопки "Нет" для колледжа
+        function handleCollegeNo() {
+            collegeNoClicks++;
+            playWindowsSound();
+            
+            const modal = document.getElementById('winModal');
+            const errorText = document.getElementById('winErrorText');
+
+            if (collegeNoClicks === 1) {
+                errorText.innerText = "Ошибка: нужно отвечать честно!";
+                modal.style.display = 'block';
+            } else if (collegeNoClicks >= 2) {
+                errorText.innerText = "Ещё подумай и дай окончательный ответ!";
+                modal.style.display = 'block';
+                // После второго нажатия "Нет" по закрытию модалки перекинем на финал
+            }
+        }
+
+        function closeWinModal() {
+            document.getElementById('winModal').style.display = 'none';
+            if (collegeNoClicks >= 2) {
+                nextPage(4);
+            }
+        }
+
+        // Генерация классического звука ошибки Windows через Web Audio API
+        function playWindowsSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.2);
+                
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } catch (e) {}
+        }
+
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicBtn');
+            if (music.paused) {
+                music.play();
+                btn.innerText = "⏸ Пауза";
+            } else {
+                music.pause();
+                btn.innerText = "🎵 Включить песню";
+            }
+        }
+    </script>
+</body>
+</html>
