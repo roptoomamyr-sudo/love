@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Для моей любимой жены ❤️</title>
+    <title>Для моей любимой жены &hearts;</title>
     <style>
         * {
             box-sizing: border-box;
@@ -53,14 +53,14 @@
         h2 {
             color: #333;
             margin-bottom: 20px;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
         }
         p {
             color: #666;
             margin-bottom: 20px;
             font-size: 1rem;
         }
-        input[type="password"], input[type="text"] {
+        input[type="password"] {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #ddd;
@@ -78,28 +78,28 @@
             background: #ff6b6b;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 20px;
             border-radius: 10px;
             font-size: 1rem;
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
             font-weight: bold;
+            width: 100%;
+            margin-bottom: 10px;
         }
         button:hover {
             background: #ff5252;
             transform: scale(1.02);
         }
-        .btn-group {
-            display: flex;
-            justify-content: space-around;
-            gap: 15px;
-            margin-top: 15px;
+        .btn-option {
+            background: #f0f2f5;
+            color: #333;
+            border: 2px solid #ddd;
         }
-        .btn-no {
-            background: #ccc;
-        }
-        .btn-no:hover {
-            background: #b3b3b3;
+        .btn-option:hover {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
         }
         .collage-container {
             max-width: 800px;
@@ -114,17 +114,17 @@
 </head>
 <body>
 
-    <!-- Фоновая музыка (убедитесь, что файл song.mp3 загружен в репозиторий) -->
+    <!-- Фоновая музыка -->
     <audio id="bgMusic" loop>
         <source src="song.mp3" type="audio/mp3">
     </audio>
 
     <!-- СТРАНИЦА 0: Приветствие и музыка -->
     <div id="page0" class="container active">
-        <div style="font-size: 50px; margin-bottom: 15px;">💖</div>
+        <div style="font-size: 50px; color: #ff6b6b; margin-bottom: 15px;">&hearts;</div>
         <h2>Привет, моя родная!</h2>
         <p>Для тебя приготовлен небольшой сюрприз. Нажми на кнопку, чтобы включить музыку и начать.</p>
-        <button onclick="startMusicAndNext()">Включить музыку и войти 🎵</button>
+        <button onclick="startMusicAndNext()">Включить музыку и войти &hearts;</button>
     </div>
 
     <!-- СТРАНИЦА 1: Авторизация (пароль) -->
@@ -132,37 +132,36 @@
         <div class="photo-frame">
             <img src="images/photo1.jpeg" alt="Наше фото">
         </div>
-        <h2>Введите пароль, чтобы войти ❤️</h2>
+        <h2>Введите пароль, чтобы войти &hearts;</h2>
         <input type="password" id="passwordInput" placeholder="Подсказка: наша дата...">
-        <br>
         <button onclick="checkPassword()">Войти</button>
         <p id="errorMsg" style="color: #ff6b6b; margin-top: 10px; font-size: 0.9rem;"></p>
     </div>
 
-    <!-- СТРАНИЦА 2: Вопрос с убегающей кнопкой -->
+    <!-- СТРАНИЦА 2: Вопрос "Любишь ли ты меня?" -->
     <div id="page2" class="container">
         <div class="photo-frame">
             <img src="images/photo2.jpeg" alt="Наше фото">
         </div>
-        <h2>Ты любишь меня так же сильно, как я тебя? 🥰</h2>
-        <div class="btn-group">
-            <button onclick="nextPage('page3')">Да! ❤️</button>
-            <button id="noBtn" class="btn-no" onmouseover="moveButton()" onclick="moveButton()">Нет</button>
-        </div>
+        <h2>Любишь ли ты меня? 🥰</h2>
+        <button class="btn-option" onclick="nextPage('page3')">Да, безумно! &hearts;</button>
+        <button class="btn-option" onclick="nextPage('page3')">По выходным немножко 😄</button>
+        <button class="btn-option" onclick="showWindowsError()">Конечно нет 😈</button>
     </div>
 
-    <!-- СТРАНИЦА 3: Вопрос-комплимент -->
+    <!-- СТРАНИЦА 3: Вопрос "Была ли влюблена в колледже" -->
     <div id="page3" class="container">
         <div class="photo-frame">
             <img src="images/photo3.jpeg" alt="Наше фото">
         </div>
-        <h2>А ты знаешь, что ты у меня самая лучшая? ✨</h2>
-        <button onclick="nextPage('page4')">Конечно знаю! 💕</button>
+        <h2>А была ли ты влюблена в меня в колледже? 😉</h2>
+        <button class="btn-option" onclick="nextPage('page4')">Дааа ❤️</button>
+        <button class="btn-option" onclick="nextPage('page4')">Нет</button>
     </div>
 
     <!-- СТРАНИЦА 4: Финал (Коллаж) -->
     <div id="page4" class="container collage-container">
-        <h2>Наша прекрасная история вместе ❤️</h2>
+        <h2>Наша прекрасная история вместе &hearts;</h2>
         <div style="margin-bottom: 20px;">
             <img src="images/collage.jpeg" alt="Свадебный коллаж" class="collage-img">
         </div>
@@ -170,7 +169,6 @@
     </div>
 
     <script>
-        // Функция включения музыки и перехода к паролю
         function startMusicAndNext() {
             var music = document.getElementById("bgMusic");
             if (music) {
@@ -181,7 +179,6 @@
             switchPage('page0', 'page1');
         }
 
-        // Универсальная функция переключения страниц
         function switchPage(currentId, nextId) {
             document.getElementById(currentId).classList.remove('active');
             document.getElementById(nextId).classList.add('active');
@@ -193,29 +190,21 @@
             document.getElementById(nextId).classList.add('active');
         }
 
-        // Проверка пароля (замените '01012023' на вашу памятную дату в формате ДДММГГГГ или цифры)
         function checkPassword() {
             const pass = document.getElementById('passwordInput').value;
             const errorMsg = document.getElementById('errorMsg');
-            
-            // Укажите ваш правильный пароль в кавычках вместо '01012023'
-            const correctPassword = '01012023'; 
+            const correctPassword = '10102018'; // Пароль (дата)
 
             if (pass === correctPassword) {
                 nextPage('page2');
             } else {
-                errorMsg.textContent = 'Неверный пароль, родная! Попробуй еще раз ❤️';
+                errorMsg.textContent = 'Неверный пароль, родная! Попробуй еще раз &hearts;';
             }
         }
 
-        // Логика убегающей кнопки "Нет"
-        function moveButton() {
-            const btn = document.getElementById('noBtn');
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth - 100);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight - 100);
-            btn.style.position = 'fixed';
-            btn.style.left = `${Math.max(20, x)}px`;
-            btn.style.top = `${Math.max(20, y)}px`;
+        // Шутка с ошибкой Windows
+        function showWindowsError() {
+            alert("Внимание! Ошибка Windows: Невозможно выбрать этот вариант, потому что вы любите меня слишком сильно! ❤️");
         }
     </script>
 </body>
